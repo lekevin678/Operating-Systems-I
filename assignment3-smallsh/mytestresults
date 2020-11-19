@@ -1,0 +1,136 @@
+PRE-SCRIPT INFO
+  Grading Script PID: 795
+  Note: your smallsh will report a different PID when evaluating $$
+: BEGINNING TEST SCRIPT
+: 
+: --------------------
+: Using comment (5 points if only next prompt is displayed next)
+: : 
+: 
+: --------------------
+: ls (10 points for returning dir contents)
+: fuck
+junk
+junk2
+mytestresults
+new
+p3testscript
+smallsh
+smallsh.c
+test
+: 
+: 
+: --------------------
+: ls out junk
+: : 
+: 
+: --------------------
+: cat junk (15 points for correctly returning contents of junk)
+: fuck
+junk
+junk2
+mytestresults
+new
+p3testscript
+smallsh
+smallsh.c
+test
+: 
+: 
+: --------------------
+: wc in junk (15 points for returning correct numbers from wc)
+:  9  9 70
+: 
+: 
+: --------------------
+: wc in junk out junk2; cat junk2 (10 points for returning correct numbers from wc)
+: :  9  9 70
+: 
+: 
+: --------------------
+: test -f badfile (10 points for returning error value of 1, note extraneous &)
+: : exit status 1
+: 
+: 
+: --------------------
+: wc in badfile (10 points for returning text error)
+: cannot open badfile for input
+: 
+: 
+: --------------------
+: badfile (10 points for returning text error)
+: badfile: No such file or directory
+: 
+: 
+: --------------------
+: sleep 100 background (10 points for returning process ID of sleeper)
+: background PID is 1467
+: 
+: 
+: --------------------
+: pkill -signal SIGTERM sleep (10 points for pid of killed process, 10 points for signal)
+: (Ignore message about Operation Not Permitted)
+: pkill: killing pid 314 failed: Operation not permitted
+pkill: killing pid 599 failed: Operation not permitted
+pkill: killing pid 763 failed: Operation not permitted
+pkill: killing pid 4254 failed: Operation not permitted
+pkill: killing pid 7270 failed: Operation not permitted
+pkill: killing pid 8351 failed: Operation not permitted
+pkill: killing pid 9009 failed: Operation not permitted
+pkill: killing pid 12009 failed: Operation not permitted
+pkill: killing pid 17201 failed: Operation not permitted
+pkill: killing pid 17672 failed: Operation not permitted
+pkill: killing pid 17687 failed: Operation not permitted
+pkill: killing pid 19355 failed: Operation not permitted
+pkill: killing pid 23413 failed: Operation not permitted
+pkill: killing pid 24802 failed: Operation not permitted
+pkill: killing pid 24913 failed: Operation not permitted
+pkill: killing pid 29577 failed: Operation not permitted
+pkill: killing pid 30859 failed: Operation not permitted
+pkill: killing pid 31354 failed: Operation not permitted
+pkill: killing pid 36707 failed: Operation not permitted
+pkill: killing pid 40017 failed: Operation not permitted
+pkill: killing pid 42491 failed: Operation not permitted
+pkill: killing pid 48990 failed: Operation not permitted
+background pid 1467 is done: terminated by signal 15
+: 
+: 
+: --------------------
+: sleep 1 background (10 pts for pid of bg ps when done, 10 for exit value)
+: background PID is 7128
+: background pid 7128 is done: exit value 0
+: 
+: 
+: --------------------
+: pwd
+: /nfs/stak/users/lekevi/OS1/assign3
+: 
+: 
+: --------------------
+: cd
+: : 
+: 
+: --------------------
+: pwd (10 points for being in the HOME dir)
+: /nfs/stak/users/lekevi
+: 
+: 
+: --------------------
+: mkdir testdir$$
+: mkdir: cannot create directory ‘testdir$$’: File exists
+: 
+: 
+: --------------------
+: cd testdir$$
+: : 
+: 
+: --------------------
+: pwd (5 points for being in the newly created dir)
+: /nfs/stak/users/lekevi/testdir$$
+: --------------------
+: Testing foreground-only mode (20 points for entry & exit text AND ~5 seconds between times)
+:  Entering foreground-only mode (& is now ignored)
+: Tue Nov 19 17:05:10 PST 2019
+: : Tue Nov 19 17:05:15 PST 2019
+:  Exiting foreground-only mode
+: 

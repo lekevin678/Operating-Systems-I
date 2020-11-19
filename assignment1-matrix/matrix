@@ -1,0 +1,268 @@
+#!/bin/bash
+
+dims(){
+    total_num=$(wc -w < $m1)            # finds the total amount of numbers
+    
+    rows=$(wc -l < $m1)                 # find the amount of lines (rows)
+    echo -ne "$rows "
+
+    cols=$((total_num / rows))          # divides total num by rows to fnd columns.
+    echo -e "$cols" 
+}
+
+transpose(){
+    total_num=$(wc -w < $m1)            # finds dimensions
+    rows=$(wc -l < $m1)
+    cols=$((total_num / rows))
+
+    i=0
+
+    while [ $i -ne $cols ]
+    do  
+        cut -f $(expr $i + 1) $m1 | tr '\n' '\t' | head -c -1 # cuts a column of the matrix, replaces new line with tab, and cuts the last character (the last tab)
+        echo
+        i=$(expr $i + 1)
+    done
+}
+
+mean(){
+    total_num=$(wc -w < $m1)            # finds dimensions
+    rows=$(wc -l < $m1)
+    cols=$((total_num / rows))
+
+    i=0
+
+    while [ $i -ne $cols ]              # Transpose the matrix 
+    do  
+        cut -f $(expr $i + 1) $m1 | tr '\n' '\t' | head -c -1       # from transpose function above
+        echo
+        i=$(expr $i + 1)
+    done > "tempfile"                   # stores transpose matrix in a temp file
+
+    sum=0
+    mean=0
+    final=0
+    i=0
+    j=0
+    counter=1
+
+    while read test                     # read line by line from the tempfile created above.
+    do
+        for j in $test
+        do 
+            sum=`expr $sum + $j`        # For each number in the line, add the numbers to sum.
+        done
+
+        eq1=$(( ($rows / 2) * (($sum>0) * 2 - 1) ))
+        eq1=$(expr $eq1  + $sum )                       # after adding all the numbers in the line, divide by numbers of rows to find mean.
+        mean=$(($eq1 / $rows))                          # roudning eqatuion. A=sum B=rows
+
+        echo -ne $mean                  # prints mean calculated above
+
+        if [ $counter -ne $cols ]       
+        then
+            echo -ne "\t"               # makes sure that there is no tab after the last number
+        fi
+
+        sum=0
+        counter=$(expr $counter + 1)    # reset sum
+
+    done < "tempfile"                   # read from tempfile above (transpose matrix)
+
+    echo                                # echos new line
+
+    rm -f "tempfile"                # delete tempfile
+
+}
+
+add(){
+
+    total_num=$(wc -w < $m1)                # calculates dimensions for both matrices
+    rows1=$(wc -l < $m1)
+    cols1=$((total_num / rows1))
+    total_num=$(wc -w < $m2)
+    rows2=$(wc -l < $m2)
+    cols2=$((total_num / rows2))
+
+    declare -a arr                          # creates an array
+    arr=()
+
+    i=0
+    k=0
+
+        while read test                     # for each line in the file    
+        do
+            for j in $test                  # for each number in the line
+            do
+                arr[k]=$j                   # add number to the array.
+                k=$(expr $k + 1)            # incease k to go to the next index of array
+            done
+        done < $m1                          # read from matrix one
+
+    i=0
+    k=0
+        while read test                     # for each line in the file
+        do
+            for j in $test                  # for each number in the line
+            do
+                temp=${arr[k]}
+                temp=$(expr $temp + $j)     # add number to the number already in the matrix at that index
+                arr[k]=$temp
+                k=$(expr $k + 1)            # incease k to go to the next index of array
+            done
+        done < $m2                          # read from matrix two
+        
+    line=1
+        for i in ${arr[@]}                  # for each number in the array
+        do
+            if [ $line = $(($cols1 )) ]     # if its the last number of the row, echo without a tab and with a new line
+            then
+                echo $i
+                line=1 
+            else                            # echo with a tab instead of new line
+                echo $i | tr '\n' '\t' 
+                line=$(expr $line + 1)
+            fi
+        done
+}
+
+multiply(){
+
+    total_num=$(wc -w < $m1)                # finds dimensions of both matrices
+    rows1=$(wc -l < $m1)
+    cols1=$((total_num / rows1))
+    total_num=$(wc -w < $m2)
+    rows2=$(wc -l < $m2)
+    cols2=$((total_num / rows2))
+
+    for i in `seq 1 $rows1`                 # for each row
+    do
+        head -n $i $m1 > "testing"          # gets first few lines of the file (depending on which iteration) and puts it in testing
+        rowMult="$(tail -n 1 "testing")"    # gets the last lines from above (in order to get the line I need) from testing
+
+        for j in `seq 1 $cols2`             # for each column
+        do
+            cut -f $(expr $j) $m2 | tr '\n' ' ' | head -c -1 > "testing"       # gets a column and instead of new line, replace with a space   
+            colMult="$(cat "testing")" 
+
+            for k in `seq 1 $(($rows2))`                    # for each number in the line
+            do
+                echo $rowMult > "testing"                   # put row from matrix 1 in a file
+                a=$(cut -d " " -f $k "testing")             # cuts a single number from the line seperated by a space
+
+                echo $colMult > "testing"                   # puts column rom matrix 2 in a file
+                b=$(cut -d " " -f $k "testing")             # cuts a single number from the line seperated by a space
+
+                sum=$(($sum + ($a * $b) ))                  # add it to the sum
+
+            done
+
+            echo -ne $sum                   # echos out final sum after adding all the numbers
+            if [ $j != $cols2 ]             # if its not the last number of the line, echo a tab.
+            then
+                echo -ne '\t'
+            fi
+            
+            sum=0                           # resets sum
+
+        done
+
+        echo                                # echos out a new line.
+
+    done
+
+    rm -f "testing"                         # deletes file
+}
+
+
+
+
+
+if [[ $1 = "dims" || $1 = "transpose" || $1 = "mean" ]]         # if a one matrix operation
+
+then
+    if [[ $# = 2 && -f $2 && -r $2 && -s $2 ]]                  # checks to see if there are two arguments (funcation call and one file), and if file excist and it eadable
+    then
+        m1=$2                                                   # if it is, then matrix one is the second argument (file)
+    
+    elif [ $# = 1 ]                                             # if there is only one argument (function call and no file)
+    then 
+
+        cat > "userinput"                                       # get user input, store it into a file
+
+        m1=userinput                                            # matrix one is the user input from the file
+        
+    elif [ $# => 2 ]                                            # if there are more than two arguments
+    then
+        echo "error" 1>&2                                       # throw error to stderr and exit
+        exit 1
+
+    else
+
+        echo "error" 1>&2                                       # throw error to stderr and exit
+        exit 1
+    fi
+
+    $1                                                          # run the function
+
+elif [ $1 = "add" ]                                             # if function call is add
+then
+    if [[ $# = 3 && -f $2 && -r $2 && -s $2 && -f $3 && -r $3 && -s $3 ]]   # checks to see if there are three arguments (one function call and two) and if files are readable and excist
+    then
+        total_num1=$(wc -w < $2)                                # gets dimensions of both matrices
+        rows1=$(wc -l < $2)
+        cols1=$((total_num1 / rows1))
+        total_num2=$(wc -w < $3) 
+        rows2=$(wc -l < $3)
+        cols2=$((total_num2 / rows2))
+
+        if [[ $rows1 = $rows2 && $cols1 = $cols2 ]]            # if the dimensions of both matrices are the same 
+        then
+            m1=$2                                              # matrix one is second argument and matrix two is third argument
+            m2=$3
+            $1                                                 # run function call
+        else
+            echo "error" 1>&2                                  # if they are not the same dimensions, throw error to stderr and exit
+            exit 1
+        fi
+    else
+        echo "error" 1>&2                                      # any other reason, throw error to stderr and exit
+        exit 1
+    fi
+
+elif [ $1 = "multiply" ]                                       # if multiply
+then
+    if [[ $# = 3 && -f $2 && -r $2 && -s $2 && -f $3 && -r $3 && -s $3 ]]   # checks to see if there are three arguments (one function call and two) and if files are readable and excist
+    then
+        total_num1=$(wc -w < $2)                               # gets dimensions of both matrices
+        rows1=$(wc -l < $2)
+        cols1=$((total_num1 / rows1))
+        total_num2=$(wc -w < $3) 
+        rows2=$(wc -l < $3)
+        cols2=$((total_num2 / rows2))
+
+        if [ $cols1 = $rows2 ]                                 # if column of matrix one is the same as rows of matrix two continue
+        then
+            m1=$2                                              # matrix one is second argument and matrix two is third argument 
+            m2=$3   
+            $1                                                 # run function call
+        else
+            echo "error" 1>&2                                  # throw error to stderr and exit
+            exit 1
+        fi
+
+    else
+        echo "error" 1>&2                                      # any other reason, throw error to stderr and exit
+        exit 1
+    fi
+    
+else                                                           # if its none of these functions
+    echo "error" 1>&2                                          
+    exit 1                                                     # throw error to stderr and exit
+
+fi
+
+rm -f "2"                                                      # remove files
+rm -f "transposefile"
+rm -f "temp"
+rm -f "userinput"

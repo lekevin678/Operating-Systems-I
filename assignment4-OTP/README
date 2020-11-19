@@ -1,0 +1,32 @@
+This assignment encrypts and decrypts information using a One Time Pad (OTP) like system.
+
+Keygen creates a key of a specified length.
+
+There are two programs running in the background acting as daemons, otp_enc_d for encryption and otp_dec_d for decryption.
+
+otp_enc will connect and send otp_enc_d the message and key needed to encrypt. otp_enc_d will collect all of this information and encrypts the message with the key. It will then send otp_enc back the encrypted message and otp_enc will print it.
+
+otp_dec will connect and send otp_dec_d the ciphertext and key needed to decrypt. otp_dec_d will collect all of this information and decrypt the ciphertex with the key. It will then send otp_dec back the plaintext message and otp_dec will print it.
+
+
+
+To compile:
+    ./compileall
+
+To Run:
+
+First setup the daemons:
+    otp_enc_d 57171 & (57171 is just an example; yours should be able to use any port)
+    otp_dec_d 57172 & (57172 is just an example; yours should be able to use any port)
+
+Create a key and write it into a file:
+    keygen 1028 > mykey (mykey is just an example for a file name)
+
+Encrypt:
+    otp_enc plaintext1 mykey 57171 > ciphertext1
+
+Decrypt:
+    otp_dec ciphertext1 mykey 57172 > plaintext1_a
+
+
+Skils: C, Encryption/Decryption, Daemons, Background Processes, Sockets, Ports, Serving, Client/Server, Send/Receive Data, Forking, Child Processes.

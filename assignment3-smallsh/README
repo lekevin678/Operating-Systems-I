@@ -1,0 +1,21 @@
+In this assignment you will write your own shell in C, similar to bash. The shell will run command line instructions and return the results similar to other shells you have used, but without many of their fancier features.
+
+In this assignment you will write your own shell, called smallsh.  This will work like the bash shell you are used to using, prompting for a command line and running commands, but it will not have many of the special features of the bash shell.
+
+Your shell will allow for the redirection of standard input and standard output and it will support both foreground and background processes (controllable by the command line and by receiving signals).
+
+Your shell will support three built in commands: exit, cd, and status. It will also support comments, which are lines beginning with the # character.
+
+A CTRL-C command from the keyboard will send a SIGINT signal
+
+A CTRL-Z command from the keyboard will send a SIGTSTP signal
+
+compile: 
+
+    gcc -o smallsh smallsh.c
+
+run:
+
+    ./smallsh
+
+Skills: C, Signals, Bash Commands, Fork, Background and Foreground Processes
